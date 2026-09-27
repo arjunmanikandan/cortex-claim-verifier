@@ -2,31 +2,10 @@
 
 AI-powered insurance claims photo analysis built on Snowflake Cortex. Upload property damage photos, and the system uses `claude-sonnet-4-6` vision to detect damage types, assess severity, check consistency against the customer's narrative, flag potential fraud, and indicate HO-3 policy coverage.
 
-## Architecture
 
-```
-                     ┌──────────────────────────┐
-                     │   Streamlit App (5 pages) │
-                     │  Dashboard · Claims Queue │
-                     │  Claim Detail · Upload    │
-                     └────────────┬─────────────┘
-                                  │
-          ┌───────────────────────┼───────────────────────┐
-          ▼                       ▼                       ▼
-  Upload images to         CALL stored procs        Read from views
-  @PROPERTY_IMAGES_STAGE   (ANALYZE_CLAIM_IMAGE)    (V_CLAIM_SUMMARY, etc.)
-          │                       │
-          ▼                       ▼
-  CLAIM_IMAGES table     AI_COMPLETE('claude-sonnet-4-6',
-                           GET_INSURANCE_ANALYSIS_PROMPT(...),
-                           TO_FILE(@stage, image))
-                                  │
-                                  ▼
-                         Parse JSON → CLAIM_FINDINGS table
+## Architecture Diagram
 
-  CUSTOMERS ← CLAIMS ← CLAIM_IMAGES ← CLAIM_FINDINGS
-  (25 rows)   (30 rows)   (uploaded)    (AI results)
-```
+<img width="1168" height="784" alt="cortex-claim-verifier" src="https://github.com/user-attachments/assets/71743811-6d21-4e18-af41-470b01a096c0" />
 
 ## What the AI Returns
 
